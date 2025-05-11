@@ -1,0 +1,5 @@
+openrouter:
+  base_url: "https://openrouter.ai/api/v1"
+  api_key: ""  # This should be set via environment variable
+  site_url: ""  # Your site URL
+  site_name: ""  # Your site name 

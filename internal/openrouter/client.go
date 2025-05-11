@@ -6,26 +6,20 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-)
 
-const (
-	baseURL = "https://openrouter.ai/api/v1"
+	"github.com/zorth44/chatbot-service/internal/config"
 )
 
 // Client represents an OpenRouter API client
 type Client struct {
-	apiKey     string
-	siteURL    string
-	siteName   string
+	config     *config.OpenRouterConfig
 	httpClient *http.Client
 }
 
 // NewClient creates a new OpenRouter API client
-func NewClient(apiKey, siteURL, siteName string) *Client {
+func NewClient(cfg *config.OpenRouterConfig) *Client {
 	return &Client{
-		apiKey:     apiKey,
-		siteURL:    siteURL,
-		siteName:   siteName,
+		config:     cfg,
 		httpClient: &http.Client{},
 	}
 }
@@ -37,19 +31,19 @@ func (c *Client) CreateChatCompletion(req *Request) (*Response, error) {
 		return nil, fmt.Errorf("failed to marshal request: %w", err)
 	}
 
-	httpReq, err := http.NewRequest("POST", fmt.Sprintf("%s/chat/completions", baseURL), bytes.NewBuffer(jsonData))
+	httpReq, err := http.NewRequest("POST", fmt.Sprintf("%s/chat/completions", c.config.BaseURL), bytes.NewBuffer(jsonData))
 	if err != nil {
 		return nil, fmt.Errorf("failed to create request: %w", err)
 	}
 
 	// Set headers
-	httpReq.Header.Set("Authorization", fmt.Sprintf("Bearer %s", c.apiKey))
+	httpReq.Header.Set("Authorization", fmt.Sprintf("Bearer %s", c.config.APIKey))
 	httpReq.Header.Set("Content-Type", "application/json")
-	if c.siteURL != "" {
-		httpReq.Header.Set("HTTP-Referer", c.siteURL)
+	if c.config.SiteURL != "" {
+		httpReq.Header.Set("HTTP-Referer", c.config.SiteURL)
 	}
-	if c.siteName != "" {
-		httpReq.Header.Set("X-Title", c.siteName)
+	if c.config.SiteName != "" {
+		httpReq.Header.Set("X-Title", c.config.SiteName)
 	}
 
 	// Send request
