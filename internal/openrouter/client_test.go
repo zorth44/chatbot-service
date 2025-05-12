@@ -8,7 +8,7 @@ import (
 
 func TestCreateChatCompletion(t *testing.T) {
 	// Load configuration
-	cfg, err := config.LoadConfig("../../../config/config.yaml")
+	cfg, err := config.LoadConfig("../../config/config.yaml")
 	if err != nil {
 		t.Fatalf("Failed to load config: %v", err)
 	}
